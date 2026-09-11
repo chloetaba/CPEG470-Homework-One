@@ -50,6 +50,7 @@ function searchItems({ q, category, kind }) {
 }
 */
 
+// FIXED SEARCHITEMS !!!!
 function searchItems({ q, category, kind }) {
   let sql = `
     SELECT
