@@ -12,6 +12,8 @@ const CATEGORIES = [
   { slug: "other", label: "Other" }
 ];
 
+/*
+OLD FUNCTION SEARCHITEMS WITH ERROR
 function searchItems({ q, category, kind }) {
   let sql = `
     SELECT
@@ -45,6 +47,47 @@ function searchItems({ q, category, kind }) {
 
   sql += " ORDER BY items.created_at DESC LIMIT 50";
   return db.prepare(sql).all();
+}
+*/
+
+function searchItems({ q, category, kind }) {
+  let sql = `
+    SELECT
+      items.id,
+      items.user_id,
+      items.kind,
+      items.category,
+      items.title,
+      items.description,
+      items.location,
+      items.contact_pref,
+      items.status,
+      items.created_at,
+      users.display_name AS owner_name
+    FROM items
+    JOIN users ON users.id = items.user_id
+    WHERE items.status != 'removed'
+  `;
+
+  const params = []; // NEW ADDITION IN ORDER TO REMOVE VULNERABILITY OF SQL INJECTION
+
+  if (q) {
+    sql += `AND items.title || ' ' || items.description || ' ' || items.location LIKE ?`;
+    params.push(`%${q}%`); // pushing the search term into the params array to prevent SQL injection (bang) 
+  }
+
+  if (category && category !== "all") {
+    sql += " AND items.category = ?";
+    params.push(category);
+  }
+
+  if (kind && kind !== "all") {
+    sql += " AND items.kind = ?";
+    params.push(kind);
+  }
+
+  sql += " ORDER BY items.created_at DESC LIMIT 50";
+  return db.prepare(sql).all(...params);
 }
 
 router.get("/", (req, res) => {
