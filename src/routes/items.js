@@ -12,7 +12,7 @@ const CATEGORIES = [
   { slug: "other", label: "Other" }
 ];
 
-
+/*
 //OLD FUNCTION SEARCHITEMS WITH ERROR
 function searchItems({ q, category, kind }) {
   let sql = `
@@ -48,10 +48,10 @@ function searchItems({ q, category, kind }) {
   sql += " ORDER BY items.created_at DESC LIMIT 50";
   return db.prepare(sql).all();
 }
+  */
 
 
 // FIXED SEARCHITEMS !!!!
-/*
 function searchItems({ q, category, kind }) {
   let sql = `
     SELECT
@@ -91,7 +91,7 @@ function searchItems({ q, category, kind }) {
   sql += " ORDER BY items.created_at DESC LIMIT 50";
   return db.prepare(sql).all(...params);
 }
-*/
+
 
 router.get("/", (req, res) => {
   const q = String(req.query.q || "").trim();
